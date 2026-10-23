@@ -33,3 +33,4 @@ Medallion architecture on Databricks (Unity Catalog, Delta tables): raw files la
 
 ### Next
 - KPI snapshot table, shipments (nested JSON) cleaning, dashboard, Genie, job scheduling, CI/CD.
+KPI snapshot (gold_consolidated.supply_chain_kpi_snapshot): 14 headline metrics, each reconciled against its source. No total-spend KPI, because the data has 5 currencies.
