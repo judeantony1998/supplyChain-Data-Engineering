@@ -20,3 +20,10 @@ The sample inventory has no parts below reorder level, so the stock-status rules
 - Handled mixed date formats and blank values in the delivery data.
 - Parsed invoice text with regex, then validated results against purchase orders (invoice totals match PO line totals plus freight and packaging).
 - Stock-status rules tested with synthetic rows, since the sample data had no low-stock parts.
+
+
+### Gold layer (in progress)
+- Dimensions: `dim_vendors`, `dim_parts`, `dim_plants` (keys verified unique, no orphan foreign keys in purchase orders).
+- Fact: `fact_purchase_orders`, enriched with vendor and plant attributes.
+- Aggregates: vendor scorecard (weighted composite score), inventory health, and vendor spend by currency.
+- The sample data contains 5 currencies, so spend is kept per currency and never summed across them. Totals are reconciled against Silver.
