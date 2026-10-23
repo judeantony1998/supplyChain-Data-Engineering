@@ -11,3 +11,5 @@ An End-to-End Supply Chain Data Engineering and AI Analytics Platform
 
 ### Next
 - Silver layer: clean dates, remove duplicates, standardize values.
+### After cleaning silver table 
+The sample inventory has no parts below reorder level, so the stock-status rules were verified with synthetic test rows.
