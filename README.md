@@ -8,7 +8,7 @@ Medallion architecture on Databricks (Unity Catalog, Delta tables): raw files la
 
 ### Bronze layer (done)
 - 11 raw Delta tables from CSV, TSV, Excel (3 sheets), nested JSON, invoice text files, image metadata and maintenance logs.
-- Every table has audit columns (`_ingested_at`, `_source_file`, `_file_format`). Raw data is kept unchanged.
+- Every table has audit columns (`_ingested_at`, `_source_file`, `_file_format`). Raw data is kept unchanged, except that spaces in Excel column names became underscores (Delta tables require this).
 - Invoices are simulated PDF text files, and the image table is simulated metadata (no real image files).
 
 ### Silver layer (7 tables)
@@ -19,11 +19,12 @@ Medallion architecture on Databricks (Unity Catalog, Delta tables): raw files la
 - Added business rules: stock status, defect rate, severity rank, open/closed and customer-impact flags.
 - Checks: row counts, null checks, key uniqueness, and links to purchase orders.
 
-### Gold layer (in progress)
+### Gold layer (done)
 - Dimensions: `dim_vendors`, `dim_parts`, `dim_plants` (keys unique, no orphan references).
 - Fact: `fact_purchase_orders`, enriched with vendor and plant attributes.
 - Aggregates: vendor scorecard (weighted composite score), inventory health, and vendor spend by currency.
-- The data contains 5 currencies, so spend is kept per currency and never added across them. Totals are reconciled against Silver.
+- KPI snapshot (`gold_consolidated.supply_chain_kpi_snapshot`): 14 headline metrics, each reconciled against its source.
+- The data contains 5 currencies, so spend is kept per currency and never added across them. Totals are reconciled against Silver, and there is no total-spend KPI.
 
 ### Data quality findings
 - Delivery DEL-003 was received with no receiver recorded.
@@ -31,6 +32,30 @@ Medallion architecture on Databricks (Unity Catalog, Delta tables): raw files la
 - Sample inventory has no low-stock parts, so stock-status rules were tested with synthetic rows.
 - The vendor scorecard does not yet use inspection results (a vendor with an open critical issue still ranks high).
 
-### Next
-- KPI snapshot table, shipments (nested JSON) cleaning, dashboard, Genie, job scheduling, CI/CD.
-KPI snapshot (gold_consolidated.supply_chain_kpi_snapshot): 14 headline metrics, each reconciled against its source. No total-spend KPI, because the data has 5 currencies.
+## Dashboard: Supply Chain Command Center
+Built with Databricks AI/BI Dashboards on the Gold layer (10 datasets, 4 pages).
+Dataset queries are in `dashboard_datasets.sql`.
+
+### Executive Summary
+![Executive Summary](docs/images/executive_summary.png)
+
+### Vendor Performance
+![Vendor Performance](docs/images/vendor_performance.png)
+
+### Inventory Health
+![Inventory Health](docs/images/inventory_health.png)
+
+### Quality and Delivery
+![Quality and Delivery](docs/images/quality_delivery.png)
+
+Design notes:
+- Spend is shown one currency at a time (the data has 5 currencies, and they are never added together).
+- The inventory page highlights the parts closest to reorder, because all 25 parts are currently healthy.
+- The delivery chart leaves pending deliveries blank instead of showing zero.
+- Part-level inventory, deliveries and open quality issues are read from Silver, because there are no Gold tables for them yet.
+
+## Next
+- Genie agent (natural-language questions on the Gold tables)
+- Job scheduling to run the pipeline automatically
+- CI/CD with GitHub Actions
+- Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
