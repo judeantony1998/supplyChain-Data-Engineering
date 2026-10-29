@@ -54,6 +54,12 @@ Design notes:
 - The delivery chart leaves pending deliveries blank instead of showing zero.
 - Part-level inventory, deliveries and open quality issues are read from Silver, because there are no Gold tables for them yet.
 
+## Genie agent
+A Genie space ("Supply Chain Analyst") lets users ask questions in plain English over the Gold tables.
+- Table and column comments were added to the Gold tables (`14_genie_table_comments`), because Genie relies on them.
+- General instructions set the business rules, including that amounts in different currencies are never added or compared.
+- Answers were validated against the source tables (`15_genie_validation`). Numbers and rankings matched exactly. Summary wording sometimes drifted (for example, overstating quality grades, or comparing spend across currencies), so narrative claims are checked too.
+
 ## Next
 - Genie agent (natural-language questions on the Gold tables)
 - Job scheduling to run the pipeline automatically
