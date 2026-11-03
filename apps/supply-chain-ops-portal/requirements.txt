@@ -1,0 +1,6 @@
+gradio~=4.44.0
+huggingface-hub~=0.35.3
+pandas~=2.2.3
+starlette==0.37.2
+databricks-sql-connector>=3.0.0
+databricks-sdk>=0.30.0
