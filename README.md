@@ -72,6 +72,34 @@ A Gradio web app deployed with Databricks Apps. It reads the Gold tables through
 ![App: Purchase Orders](docs/images/app_purchase_orders.png)
 ![App: Spend by Currency](docs/images/app_spend_by_currency.png)
 
+
+## Orchestration (Lakeflow Jobs)
+**Option A- Jobs: runs the notebooks we already have, in order.**
+
+The pipeline is orchestrated as a multi-task Databricks Job: **Supply Chain ETL Pipeline**
+(job ID 999645936697666). Each notebook from the medallion layers runs as a task, with
+dependencies defining the execution order — bronze tasks run in parallel, silver runs
+after its bronze inputs, and gold runs last. Tasks retry once (60s interval) on failure.
+
+**Task graph:**
+
+| Task | Notebook | Depends on |
+| --- | --- | --- |
+| bronze_csv / bronze_tsv / bronze_excel / bronze_json / bronze_invoices / bronze_images_logs | 02–07 | — (all run in parallel) |
+| silver_core | 08_silver_core_tables | bronze_csv, bronze_tsv, bronze_excel |
+| silver_invoices | 09_silver_invoices | bronze_invoices, silver_core |
+| silver_quality | 12_silver_quality_inspections | bronze_excel |
+| gold_dimensions | 10_gold_dimensions | silver_core |
+| gold_facts_aggregates | 11_gold_facts_aggregates | gold_dimensions |
+| gold_kpi_snapshot | 13_gold_kpi_snapshot | gold_facts_aggregates, silver_quality |
+
+A full run completes end-to-end in ~3.5 minutes (latest successful run: 448955423657070).
+The job also has a daily 6:00 AM IST schedule (currently paused).
+
+![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Task.png)
+![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Run.png)
+![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Succeeded.png)
+
 ## Next
 - Job scheduling to run the pipeline automatically
 - CI/CD with GitHub Actions
