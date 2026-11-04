@@ -99,6 +99,7 @@ The job also has a daily 6:00 AM IST schedule (currently paused).
 ![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Task.png)
 ![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Run.png)
 ![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Succeeded.png)
+![Lakeflow Jobs](docs/images/Lineage_View.png)
 
 ## Next
 - Job scheduling to run the pipeline automatically
