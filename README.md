@@ -60,8 +60,20 @@ A Genie space ("Supply Chain Analyst") lets users ask questions in plain English
 - General instructions set the business rules, including that amounts in different currencies are never added or compared.
 - Answers were validated against the source tables (`15_genie_validation`). Numbers and rankings matched exactly. Summary wording sometimes drifted (for example, overstating quality grades, or comparing spend across currencies), so narrative claims are checked too.
 
+## Databricks App: Supply Chain Operations Portal
+A Gradio web app deployed with Databricks Apps. It reads the Gold tables through a SQL warehouse and shows four tabs: vendor scorecard, inventory health, purchase orders by status, and spend by currency.
+- Code: `apps/supply-chain-ops-portal/`
+- The app runs under its own service principal, which has read-only access to the Gold schema only (`16_app_permissions`).
+- Queries use parameters instead of building SQL from text, and amounts in different currencies are never added together.
+
+![App: Supply Chain Ops Portal Deployment](docs/images/Supply-Chain-Ops-Portal deployment.png)
+![App: Inventory Health](docs/images/app_inventory_health.png)
+![App: Vendor Scorecard](docs/images/app_vendor_scorecard.png)
+![App: Purchase Orders](docs/images/app_purchase_orders.png)
+![App: Spend by Currency](docs/images/app_spend_by_currency.png)
+
 ## Next
-- Genie agent (natural-language questions on the Gold tables)
 - Job scheduling to run the pipeline automatically
 - CI/CD with GitHub Actions
 - Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
+
