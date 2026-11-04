@@ -66,7 +66,7 @@ A Gradio web app deployed with Databricks Apps. It reads the Gold tables through
 - The app runs under its own service principal, which has read-only access to the Gold schema only (`16_app_permissions`).
 - Queries use parameters instead of building SQL from text, and amounts in different currencies are never added together.
 
-![App: Supply Chain Ops Portal Deployment](docs/images/Supply-Chain-Ops-Portal deployment.png)
+![App: Portal Deployment](docs/images/Supply-Chain-Ops-Portal_Deployment.png)
 ![App: Inventory Health](docs/images/app_inventory_health.png)
 ![App: Vendor Scorecard](docs/images/app_vendor_scorecard.png)
 ![App: Purchase Orders](docs/images/app_purchase_orders.png)
