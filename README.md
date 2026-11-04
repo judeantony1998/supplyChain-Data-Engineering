@@ -101,6 +101,34 @@ The job also has a daily 6:00 AM IST schedule (currently paused).
 ![Lakeflow Jobs](docs/images/ETL_Job_Pipeline_Succeeded.png)
 ![Lakeflow Jobs](docs/images/Lineage_View.png)
 
+
+# Supply Chain ETL — Lakeflow Spark Declarative Pipeline
+
+ETL pipeline (bronze → silver → gold) ingesting purchase-order CSVs into Unity Catalog.
+
+**Pipeline:** `supply_chain_sdp` · Catalog/schema: `capstone_supply_chain.sdp_demo`
+**Landing volume:** `/Volumes/capstone_supply_chain/bronze/landing_csv/`
+
+## Flow
+landing_csv → **bronze_purchase_orders** (Auto Loader, raw) →
+**silver_purchase_orders** (cleaned + quality rules) →
+**gold_vendor_spend_by_currency** (spend per vendor/currency)
+
+## Quality rules (silver, drop unless noted)
+`valid_po_id` · `valid_unit_price` (price > 0) · `valid_order_qty` (qty > 0) · `valid_order_date` (count-only)
+
+## Run
+Upload CSVs to the volume → Run (incremental, only new files). Full refresh = rebuild all.
+
+## Test file
+`purchase_orders_test.csv` (1 valid + 2 invalid rows) proves the rules: bronze +3, silver +1 (2 dropped), gold +1.## Quality rules (silver, drop unless noted)
+`valid_po_id` · `valid_unit_price` (price > 0) · `valid_order_qty` (qty > 0) · `valid_order_date` (count-only)
+
+![App: Portal Deployment](docs/images/SDP_jobrun.png)
+![App: Inventory Health](docs/images/SDP_job_result.png)
+![App: Vendor Scorecard](docs/images/SDP_jobrun_test.png)
+
+
 ## Next
 - Job scheduling to run the pipeline automatically
 - CI/CD with GitHub Actions
