@@ -1,0 +1,10 @@
+bundle:
+  name: supply_chain_capstone
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true

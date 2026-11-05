@@ -1,0 +1,107 @@
+resources:
+  jobs:
+    supply_chain_etl:
+      name: "Supply Chain ETL (bundle)"
+      max_concurrent_runs: 1
+
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: "Asia/Kolkata"
+        pause_status: PAUSED
+
+      tasks:
+        - task_key: bronze_csv
+          notebook_task:
+            notebook_path: ../02_bronze_csv.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_tsv
+          notebook_task:
+            notebook_path: ../03_bronze_tsv.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_excel
+          notebook_task:
+            notebook_path: ../04_bronze_excel.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_json
+          notebook_task:
+            notebook_path: ../05_bronze_json.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_invoices
+          notebook_task:
+            notebook_path: ../06_bronze_invoices.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: bronze_images_logs
+          notebook_task:
+            notebook_path: ../07_bronze_images_logs.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_core
+          depends_on:
+            - task_key: bronze_csv
+            - task_key: bronze_tsv
+            - task_key: bronze_excel
+          notebook_task:
+            notebook_path: ../08_silver_core_tables.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_invoices
+          depends_on:
+            - task_key: bronze_invoices
+            - task_key: silver_core
+          notebook_task:
+            notebook_path: ../09_silver_invoices.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_quality
+          depends_on:
+            - task_key: bronze_excel
+          notebook_task:
+            notebook_path: ../12_silver_quality_inspections.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_dimensions
+          depends_on:
+            - task_key: silver_core
+          notebook_task:
+            notebook_path: ../10_gold_dimensions.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_facts_aggregates
+          depends_on:
+            - task_key: gold_dimensions
+          notebook_task:
+            notebook_path: ../11_gold_facts_aggregates.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: gold_kpi_snapshot
+          depends_on:
+            - task_key: gold_facts_aggregates
+            - task_key: silver_quality
+          notebook_task:
+            notebook_path: ../13_gold_kpi_snapshot.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: genie_comments
+          depends_on:
+            - task_key: gold_kpi_snapshot
+          notebook_task:
+            notebook_path: ../14_genie_table_comments.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
