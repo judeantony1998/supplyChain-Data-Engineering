@@ -1,0 +1,40 @@
+name: Deploy bundle (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "What to do with the ci target"
+        type: choice
+        options:
+          - validate-only
+          - deploy
+          - destroy
+        default: validate-only
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up the Databricks CLI (pinned version)
+        uses: databricks/setup-cli@v0.273.0
+
+      - name: Validate the bundle
+        run: databricks bundle validate -t ci
+
+      - name: Deploy the bundle
+        if: inputs.action == 'deploy'
+        run: databricks bundle deploy -t ci
+
+      - name: Destroy the deployed resources
+        if: inputs.action == 'destroy'
+        run: databricks bundle destroy -t ci --auto-approve
