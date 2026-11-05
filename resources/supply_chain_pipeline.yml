@@ -1,0 +1,13 @@
+#Create the pipeline for SDP bundle
+
+resources:
+  pipelines:
+    supply_chain_sdp:
+      name: "Supply Chain SDP (bundle)"
+      serverless: true
+      continuous: false
+      catalog: capstone_supply_chain
+      schema: sdp_demo_bundle
+      libraries:
+        - file:
+            path: ../supply_chain_sdp/transformations/purchase_orders_pipeline.py
