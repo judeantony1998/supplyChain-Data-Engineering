@@ -4,6 +4,7 @@ import py_compile
 import re
 import subprocess
 import sys
+import os
 
 import yaml
 
@@ -61,6 +62,35 @@ for f in sorted(set(text_files)):
         if re.search(regex, content):
             errors.append(f"Possible {label} found in {f}")
 print(f"Files scanned for secrets: {len(set(text_files))}")
+
+# 4b. Files referenced by the bundle must exist
+def collect_paths(node, found):
+    """Collect notebook_path and library file paths from a YAML structure."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "notebook_path" and isinstance(value, str):
+                found.append(value)
+            elif key == "file" and isinstance(value, dict) and isinstance(value.get("path"), str):
+                found.append(value["path"])
+            else:
+                collect_paths(value, found)
+    elif isinstance(node, list):
+        for item in node:
+            collect_paths(item, found)
+
+bundle_files = [f for f in yaml_files if f.startswith("resources/")]
+referenced = 0
+for f in bundle_files:
+    with open(f, encoding="utf-8") as fh:
+        doc = yaml.safe_load(fh)
+    paths = []
+    collect_paths(doc, paths)
+    for p in paths:
+        referenced += 1
+        target = os.path.normpath(os.path.join(os.path.dirname(f), p))
+        if not os.path.exists(target):
+            errors.append(f"{f} refers to a missing file: {p}")
+print(f"Bundle file references checked: {referenced}")
 
 # 5. Sanity check: a check that looks at nothing must not pass
 minimums = {
