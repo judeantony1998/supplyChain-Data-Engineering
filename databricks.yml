@@ -4,7 +4,19 @@ bundle:
 include:
   - resources/*.yml
 
+variables:
+  pipeline_schema:
+    description: Schema the declarative pipeline writes its tables to
+    default: sdp_demo_bundle
+
 targets:
   dev:
     mode: development
     default: true
+
+  ci:
+    mode: development
+    presets:
+      name_prefix: "ci_"
+    variables:
+      pipeline_schema: sdp_demo_ci
