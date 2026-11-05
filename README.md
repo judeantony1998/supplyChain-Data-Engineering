@@ -129,8 +129,20 @@ Upload CSVs to the volume → Run (incremental, only new files). Full refresh = 
 ![App: Vendor Scorecard](docs/images/SDP_jobrun_test.png)
 
 
-## Next
-- Job scheduling to run the pipeline automatically
-- CI/CD with GitHub Actions
-- Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
+## Orchestration
+### Lakeflow Job: Supply Chain ETL Pipeline
+- 13 notebook tasks with dependencies: 6 parallel Bronze tasks, then Silver, then Gold, then the KPI snapshot, with table comments reapplied last.
+- Created with the Databricks SDK (`17_create_job`), running on serverless compute with one retry per task.
+- Full run takes about 4 minutes. The daily 06:00 schedule is configured but paused, to save Free Edition quota.
+- Every notebook overwrites its output, so reruns are safe (idempotent).
 
+### Declarative Pipeline: purchase orders (`sdp_demo` schema)
+- Bronze streaming table (Auto Loader) → Silver with data quality expectations → Gold spend per vendor and currency.
+- Results match the notebook version exactly (20 / 20 / 14 rows).
+- Test: a file with 1 valid and 2 invalid rows was loaded incrementally, [bronze 20 → 23, silver 20 → 21], and the expectations dropped the 2 bad rows. The file was then removed and a full refresh restored the original counts.
+- Jobs vs pipelines: the job orchestrates everything (notebooks, ordering, retries), and the pipeline declares tables and quality rules. Real projects often use both.
+
+## Next
+## Next
+- CI/CD with Databricks Asset Bundles and GitHub Actions
+- Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
