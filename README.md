@@ -1,4 +1,7 @@
 # SupplyChain-Data-Engineering
+
+![CI](https://github.com/judeantony1998/supplyChain-Data-Engineering/actions/workflows/ci.yml/badge.svg)
+
 An End-to-End Supply Chain Data Engineering and AI Analytics Platform
 
 ## Progress
