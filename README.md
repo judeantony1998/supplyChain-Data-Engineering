@@ -145,7 +145,24 @@ Upload CSVs to the volume → Run (incremental, only new files). Full refresh = 
 - Test: a file with 1 valid and 2 invalid rows was loaded incrementally, [bronze 20 → 23, silver 20 → 21], and the expectations dropped the 2 bad rows. The file was then removed and a full refresh restored the original counts.
 - Jobs vs pipelines: the job orchestrates everything (notebooks, ordering, retries), and the pipeline declares tables and quality rules. Real projects often use both.
 
-## Next
+## Declarative Automation Bundle and CI
+The job and the pipeline are defined as files and deployed with a bundle:
+- `databricks.yml`: bundle with a `dev` target (development mode).
+- `resources/supply_chain_job.yml`: the 13-task ETL job (6 parallel Bronze tasks, Silver, Gold, KPI snapshot, Genie comments), serverless compute, daily schedule paused.
+- `resources/supply_chain_pipeline.yml`: the declarative pipeline for purchase orders (writes to its own schema).
+- Deployed and run from the workspace bundle panel; results match the earlier notebook and pipeline versions.
+
+![App: Bundle Job](docs/images/supplychain_ETL_Bundle_Job.png)
+![App: Bundle Pipeline](docs/images/supplychain_ETL_Bundle.png)
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on every push:
+- Python syntax, notebook file and YAML checks
+- Check that every file referenced by the bundle exists
+- Secret scan for token patterns
+- Fails if it checks almost nothing (a guard added after a first run passed while checking zero files)
+
+Not done: staging and production targets (they need separate workspaces and catalogs), and automatic deployment from GitHub.
+
 ## Next
 - CI/CD with Databricks Asset Bundles and GitHub Actions
 - Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
