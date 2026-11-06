@@ -163,6 +163,19 @@ GitHub Actions (`.github/workflows/ci.yml`) runs on every push:
 
 Not done: staging and production targets (they need separate workspaces and catalogs), and automatic deployment from GitHub.
 
+
+
+### Continuous deployment
+- `.github/workflows/deploy.yml` validates, deploys or destroys the bundle's `ci` target on demand (manual trigger), using a short-lived Databricks token stored in GitHub Secrets.
+- The CLI version is pinned, and the workflow has read-only repository permissions.
+- The `ci` target has its own name prefix and pipeline schema, so it can't collide with `dev`.
+- [Result: validated and deployed successfully from GitHub]
+
+![App: CI/CD](docs/images/All_Deployment.png)
+![App: CI/CD](docs/images/ci_supply_chain_ETL_bundle.png)
+![App: CI/CD](docs/images/ci_supply_chain_sdp_bundle_Pipeline.png)
+
+
+
 ## Next
-- CI/CD with Databricks Asset Bundles and GitHub Actions
 - Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
