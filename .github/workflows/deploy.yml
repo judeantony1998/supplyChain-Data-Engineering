@@ -25,8 +25,8 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v4
 
-      - name: Set up the Databricks CLI (pinned version)
-        uses: databricks/setup-cli@v0.273.0
+      - name: Set up the Databricks CLI (patched version)
+        uses: databricks/setup-cli@v0.296.1
 
       - name: Validate the bundle
         run: databricks bundle validate -t ci
