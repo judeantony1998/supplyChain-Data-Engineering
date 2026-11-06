@@ -177,5 +177,7 @@ Not done: staging and production targets (they need separate workspaces and cata
 
 
 
-## Next
-- Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
+## Silver cleaning for shipments (nested JSON), maintenance logs and image metadata
+- Freight cost is missing for 2 of 3 shipments, so freight cost per kg is left empty and not set to zero.
+- The ocean shipment is still "In Transit" with an ETA of 28 March 2026 (the sample dates are far in the past).
+- The image table is simulated metadata, but it is checked against the inspections it belongs to (part numbers match and the defect flag agrees).

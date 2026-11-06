@@ -123,3 +123,11 @@ resources:
             notebook_path: ../20_silver_inspection_images.ipynb
           max_retries: 1
           min_retry_interval_millis: 60000
+
+        - task_key: silver_maintenance
+          depends_on:
+            - task_key: bronze_images_logs
+          notebook_task:
+            notebook_path: ../21_silver_maintenance_logs.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
