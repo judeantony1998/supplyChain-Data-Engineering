@@ -105,3 +105,21 @@ resources:
             notebook_path: ../14_genie_table_comments.ipynb
           max_retries: 1
           min_retry_interval_millis: 60000
+
+        - task_key: silver_shipments
+          depends_on:
+            - task_key: bronze_json
+            - task_key: silver_core
+          notebook_task:
+            notebook_path: ../19_silver_shipments.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
+
+        - task_key: silver_inspection_images
+          depends_on:
+            - task_key: bronze_images_logs
+            - task_key: silver_quality
+          notebook_task:
+            notebook_path: ../20_silver_inspection_images.ipynb
+          max_retries: 1
+          min_retry_interval_millis: 60000
