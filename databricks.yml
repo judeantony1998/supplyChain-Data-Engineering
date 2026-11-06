@@ -17,6 +17,6 @@ targets:
   ci:
     mode: development
     presets:
-      name_prefix: "ci_"
+      name_prefix: "ci_info_jude_antony_"
     variables:
       pipeline_schema: sdp_demo_ci
